@@ -3,7 +3,7 @@
 import unittest
 import argparse
 
-from tests import base
+from tests import base, related
 
 
 if __name__ == "__main__":
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     else:
         # Run all the tests
         suites = []
-        for mod in [base, ]:
+        for mod in [base, related]:
             suite = unittest.TestLoader().loadTestsFromModule(mod)
             suites.append(suite)
         suite = unittest.TestSuite(suites)
