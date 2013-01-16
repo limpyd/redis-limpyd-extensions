@@ -1,8 +1,11 @@
 import unittest
 import sys
 
-from limpyd import DEFAULT_CONNECTION_SETTINGS, TEST_CONNECTION_SETTINGS
+from limpyd.database import DEFAULT_CONNECTION_SETTINGS
 from limpyd.contrib.database import PipelineDatabase
+
+TEST_CONNECTION_SETTINGS = DEFAULT_CONNECTION_SETTINGS.copy()
+TEST_CONNECTION_SETTINGS['db'] = 15
 
 test_database = PipelineDatabase(**TEST_CONNECTION_SETTINGS)
 

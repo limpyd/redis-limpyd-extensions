@@ -24,7 +24,7 @@ class Person(TestRedisModel):
 
 class Group(TestRedisModel):
     name = fields.PKField()
-    parent = related.FKHashableField('self', related_name='children')
+    parent = related.FKInstanceHashField('self', related_name='children')
     members = related.M2MSetField(Person, related_name='membership')
     lmembers = related.M2MListField(Person, related_name='lmembership')
     zmembers = related.M2MSortedSetField(Person, related_name='zmembership')
@@ -68,7 +68,7 @@ class ReverseMethodsTest(LimpydBaseTest):
         self.assertEqual(self.ybon.prefered_group.get(), None)
         self.assertEqual(set(self.core_devs.prefered_for()), set())
 
-    def test_fkhashablefield(self):
+    def test_fkinstancehashfield(self):
         # set the legacy way
         self.fan_boys.parent.hset(self.main_group)
         self.assertEqual(self.fan_boys.parent.hget(), self.main_group._pk)

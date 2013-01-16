@@ -7,7 +7,7 @@ from limpyd import model, fields
 # all stuff existing or redefined from limpyd.contrib.related
 from limpyd.contrib.related import (RelatedCollection, RelatedModel,
                                     FKStringField as BaseFKStringField,
-                                    FKHashableField as BaseFKHashableField,
+                                    FKInstanceHashField as BaseFKInstanceHashField,
                                     M2MSetField as BaseM2MSetField,
                                     M2MListField as BaseM2MListField,
                                     M2MSortedSetField as BaseM2MSortedSetFiel)
@@ -69,9 +69,9 @@ class RelatedCollectionForString(_RelatedCollectionForFK):
     _set_method = 'set'
 
 
-class RelatedCollectionForHashable(_RelatedCollectionForFK):
+class RelatedCollectionForInstanceHash(_RelatedCollectionForFK):
     """
-    A RelatedCollection for FKHashableField that can simulate calls to a real Set.
+    A RelatedCollection for FKInstanceHashField that can simulate calls to a real Set.
     Available methods: sadd and srem.
     """
     _set_method = 'hset'
@@ -160,8 +160,8 @@ class FKStringField(BaseFKStringField):
     related_collection_class = RelatedCollectionForString
 
 
-class FKHashableField(BaseFKHashableField):
-    related_collection_class = RelatedCollectionForHashable
+class FKInstanceHashField(BaseFKInstanceHashField):
+    related_collection_class = RelatedCollectionForInstanceHash
 
 
 class M2MSetField(BaseM2MSetField):
