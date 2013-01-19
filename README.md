@@ -5,16 +5,15 @@ Some extensions for [redis-limpyd][] ([redis][] orm (sort of) in python)
 
 Github repository: <https://github.com/twidi/redis-limpyd-extensions>
 
-Note that you actually need the [develop branch of the twidi's fork of redis-limpyd][twidi-limpyd]
-
 List of available extensions:
 
 * [Add/remove related on both sides] (#addremove-related-on-both-sides)
+* [Dynamic fields] (#dynamic-fields)
 
 
 ## Add/remove related on both sides ##
 
-Say we have the following models:
+Say we have the following related models:
 
 ```python
     class Person(RelatedModel):
@@ -232,3 +231,154 @@ is the same as the new:
 [redis]: http://redis.io
 [redis-limpyd]: https://github.com/yohanboniface/redis-limpyd
 [twidi-limpyd]: https://github.com/twidi/redis-limpyd/tree/develop
+
+
+## Dynamic fields
+
+Dynamic fields provide a way to add unlimited fields to a model by defining a (or many) dynamic field, and use it with a dynamic part. ie a dynamic field name "foo" can be used with as many dynamic parts as you want to create dynamic variations: "foo_bar" for the dynamic part "bar", "foo_baz" for the dynamic part "baz", and so on.
+
+A simple API to use them, and filter on them, is provided.
+
+To use a dynamic field, your model must inherit from the following mixin: `ModelWithDynamicFieldMixin`, found in `limpyd_extensions.dynamic.model`.
+It's a mixin, you should use it with another `RedisModel` class.
+Fields are available as field classes (`DynamicStringField`, `DynamicInstanceHashField`, `DynamicListField`, `DynamicSetField`, `DynamicSortedSetField`) or as a mixin (`DynamicFieldMixin`) if you want to adapt an external field. You can find them in `limpyd_extensions.dynamic.fields`
+
+A short example on how to define a dynamic field on a model:
+
+```python
+from limpyd.model import RedisModel
+
+from limpyd_extension.dynamic.model import ModelWithDynamicFieldMixin
+from limpyd_extension.dynamic.fields import DynamicSetField
+
+
+class MyModel(ModelWithDynamicFieldMixin, RedisModel):
+    foo = DynamicSetField(indexable=True)
+```
+
+As the `foo` field is dynamic, you cannot run any command on it, but only on its dynamic variations. How to do it ?
+
+There is two ways:
+
+* use the `get_field` method of the model:
+
+```python
+foo_bar = myinstance.get_field('foo_bar')
+```
+
+* use the `get_for` method of the field:
+
+```python
+foo_bar = myinstance.foo.get_for('bar')
+```
+
+The latter is useful if you have a variable instead of known value:
+
+```python
+somebar = 'bar'
+foo_bar = myinstance.foo.get_for(somevar)
+```
+
+Note that you can use this shortcut instead of using `get_for`:
+
+```python
+foo_bar = myinstance.foo(somevar)
+```
+
+Knowing this, you can do operations on these fields:
+
+```
+myinstance.foo(somevar).sadd('one', 'two', 'three')
+myinstance.foo(othervar).sadd('four', 'five')
+myotherinstance.foo(somevar).sadd('three', 'thirty')
+print myinstance.foo(somevar).smembers()
+print myinstance.foo(othervar).smembers()
+print myotherinstance.foo(somevar).smembers()
+```
+
+To filter on indexable dynamic fields, there is two ways too:
+
+* use the classic way, if you now the dynamic part in advance:
+
+```python
+MyModel.collection(foo_bar='three')
+```
+
+* use the new `dynamic_filter` method:
+
+```python
+MyModel.collection().dynamic_filter('foo', 'bar', 'three')
+```
+
+Parameters are: the field name, the dynamic part, and the value for the filter.
+
+The collection manager used with `ModelWithDynamicFieldMixin` depends on `ExtendedCollectionManager`, so you can chain filters and dynamic filters on the resulting collection.
+
+
+### Dynamic related fields
+
+Dynamic fields also work with related fields, exactly the same way. There is only to additions:
+
+* if you pass a model instance in the `get_for` method, it will be translated to it's pk
+* the first argument of a "related collection" is the dynamic part (can also be an instance)
+
+An exemple using dynamic related fields:
+
+```python
+from limpyd.fields import PKField
+from limpyd_extensions.dynamic.model import ModelWithDynamicFieldMixin
+from limpyd_extensions.dynamic.related import DynamicM2MSetField
+
+class Tag(MyBaseModel):
+    slug = PKField()
+
+class Person(MyBaseModel):
+    name = PKField()
+
+class Movie(ModelWithDynamicFieldMixin, MyBaseModel):
+    name = PKField()
+    tags = DynamicM2MSetField(Tag, related_name='movies')
+
+somebody = Person(name='Somebody')
+matrix = Movie(name='Matrix')
+cool = Tag(name='cool')
+
+matrix.tags.get_for(somebody).sadd(cool)
+# same as: matrix.tags(somebody).sadd(cool)
+
+cool_movies_for_somebody = cool.movies(somebody)  # the related collection
+# ['Matrix']
+```
+
+
+### Provided classes
+
+Here is the list of modules and classes provided with the `limpyd_extensions.dynamic` module:
+
+* **model**
+    * **mixins**
+        * `ModelWithDynamicFieldMixin(object)` - A mixin tu use for your model with dynamic fields
+* **collection**
+    * **mixins**
+        * `CollectionManagerForModelWithDynamicFieldMixin(object)` - A mixin to use if you want to add the `dynamic_filter` method to your own collection manager
+    * **full classes**
+        * `CollectionManagerForModelWithDynamicField(CollectionManagerForModelWithDynamicFieldMixin, ExtendedCollectionManager)` - A simple class inheriting from our mixin and the manager from `limpyd.contrib.collection`
+* **field**
+    * **mixins**
+        * `DynamicFieldMixin(object)` - A mixin within all the stuff for dynamic fields is done, to use to add dynamic field support to your own fields
+    * **full classes**
+        All fields simply inherits from our mixin and the wanted base field, without anymore addition:
+        * `DynamicStringField(DynamicFieldMixin, StringField)`
+        * `DynamicInstanceHashField(DynamicFieldMixin, InstanceHashField)`
+        * `DynamicListField(DynamicFieldMixin, ListField)`
+        * `DynamicSetField(DynamicFieldMixin, SetField)`
+        * `DynamicSortedSetField(DynamicFieldMixin, SortedSetField)`
+* **related**
+    * **mixins**
+        * `DynamicRelatedFieldMixin(DynamicFieldMixin)` - A mixin within all the stuff for dynamic related fields is done, to use to add dynamic field support to your own related fields
+    * **full classes**
+        * `DynamicFKStringField(DynamicRelatedFieldMixin, FKStringField)`
+        * `DynamicFKInstanceHashField(DynamicRelatedFieldMixin, FKInstanceHashField)`
+        * `DynamicM2MSetField(DynamicRelatedFieldMixin, M2MSetField)`
+        * `DynamicM2MListField(DynamicRelatedFieldMixin, M2MListField)`
+        * `DynamicM2MSortedSetField(DynamicRelatedFieldMixin, M2MSortedSetField)` 

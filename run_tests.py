@@ -4,6 +4,7 @@ import unittest
 import argparse
 
 from tests import base, related
+from tests.dynamic import fields as dyn_fields, related as dyn_related
 
 
 if __name__ == "__main__":
@@ -35,7 +36,7 @@ if __name__ == "__main__":
     else:
         # Run all the tests
         suites = []
-        for mod in [base, related]:
+        for mod in [base, related, dyn_fields, dyn_related]:
             suite = unittest.TestLoader().loadTestsFromModule(mod)
             suites.append(suite)
         suite = unittest.TestSuite(suites)
