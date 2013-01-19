@@ -235,8 +235,6 @@ is the same as the new:
 
 ## Dynamic fields
 
-### Description
-
 Dynamic fields provide a way to add unlimited fields to a model by defining a (or many) dynamic field, and use it with a dynamic part. ie a dynamic field name "foo" can be used with as many dynamic parts as you want to create dynamic variations: "foo_bar" for the dynamic part "bar", "foo_baz" for the dynamic part "baz", and so on.
 
 A simple API to use them, and filter on them, is provided.
@@ -317,6 +315,42 @@ Parameters are: the field name, the dynamic part, and the value for the filter.
 The collection manager used with `ModelWithDynamicFieldMixin` depends on `ExtendedCollectionManager`, so you can chain filters and dynamic filters on the resulting collection.
 
 
+### Dynamic related fields
+
+Dynamic fields also work with related fields, exactly the same way. There is only to additions:
+
+* if you pass a model instance in the `get_for` method, it will be translated to it's pk
+* the first argument of a "related collection" is the dynamic part (can also be an instance)
+
+An exemple using dynamic related fields:
+
+```python
+from limpyd.fields import PKField
+from limpyd_extensions.dynamic.model import ModelWithDynamicFieldMixin
+from limpyd_extensions.dynamic.related import DynamicM2MSetField
+
+class Tag(MyBaseModel):
+    slug = PKField()
+
+class Person(MyBaseModel):
+    name = PKField()
+
+class Movie(ModelWithDynamicFieldMixin, MyBaseModel):
+    name = PKField()
+    tags = DynamicM2MSetField(Tag, related_name='movies')
+
+somebody = Person(name='Somebody')
+matrix = Movie(name='Matrix')
+cool = Tag(name='cool')
+
+matrix.tags.get_for(somebody).sadd(cool)
+# same as: matrix.tags(somebody).sadd(cool)
+
+cool_movies_for_somebody = cool.movies(somebody)  # the related collection
+# ['Matrix']
+```
+
+
 ### Provided classes
 
 Here is the list of modules and classes provided with the `limpyd_extensions.dynamic` module:
@@ -339,3 +373,12 @@ Here is the list of modules and classes provided with the `limpyd_extensions.dyn
         * `DynamicListField(DynamicFieldMixin, ListField)`
         * `DynamicSetField(DynamicFieldMixin, SetField)`
         * `DynamicSortedSetField(DynamicFieldMixin, SortedSetField)`
+* **related**
+    * **mixins**
+        * `DynamicRelatedFieldMixin(DynamicFieldMixin)` - A mixin within all the stuff for dynamic related fields is done, to use to add dynamic field support to your own related fields
+    * **full classes**
+        * `DynamicFKStringField(DynamicRelatedFieldMixin, FKStringField)`
+        * `DynamicFKInstanceHashField(DynamicRelatedFieldMixin, FKInstanceHashField)`
+        * `DynamicM2MSetField(DynamicRelatedFieldMixin, M2MSetField)`
+        * `DynamicM2MListField(DynamicRelatedFieldMixin, M2MListField)`
+        * `DynamicM2MSortedSetField(DynamicRelatedFieldMixin, M2MSortedSetField)` 
