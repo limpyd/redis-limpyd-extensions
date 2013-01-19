@@ -235,3 +235,7 @@ class DynamicSetField(DynamicFieldMixin, limpyd_fields.SetField):
 
 class DynamicSortedSetField(DynamicFieldMixin, limpyd_fields.SortedSetField):
     pass
+
+
+class DynamicHashField(DynamicFieldMixin, limpyd_fields.HashField):
+    pass

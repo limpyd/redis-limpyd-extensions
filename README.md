@@ -241,7 +241,7 @@ A simple API to use them, and filter on them, is provided.
 
 To use a dynamic field, your model must inherit from the following mixin: `ModelWithDynamicFieldMixin`, found in `limpyd_extensions.dynamic.model`.
 It's a mixin, you should use it with another `RedisModel` class.
-Fields are available as field classes (`DynamicStringField`, `DynamicInstanceHashField`, `DynamicListField`, `DynamicSetField`, `DynamicSortedSetField`) or as a mixin (`DynamicFieldMixin`) if you want to adapt an external field. You can find them in `limpyd_extensions.dynamic.fields`
+Fields are available as field classes (`DynamicStringField`, `DynamicInstanceHashField`, `DynamicListField`, `DynamicSetField`, `DynamicSortedSetField`, `DynamicHashField`) or as a mixin (`DynamicFieldMixin`) if you want to adapt an external field. You can find them in `limpyd_extensions.dynamic.fields`
 
 A short example on how to define a dynamic field on a model:
 
@@ -373,6 +373,7 @@ Here is the list of modules and classes provided with the `limpyd_extensions.dyn
         * `DynamicListField(DynamicFieldMixin, ListField)`
         * `DynamicSetField(DynamicFieldMixin, SetField)`
         * `DynamicSortedSetField(DynamicFieldMixin, SortedSetField)`
+        * `DynamicHashField(DynamicFieldMixin, HashField)`
 * **related**
     * **mixins**
         * `DynamicRelatedFieldMixin(DynamicFieldMixin)` - A mixin within all the stuff for dynamic related fields is done, to use to add dynamic field support to your own related fields
