@@ -30,15 +30,15 @@ And some data:
 
 ```python
     somebody = Person(name='foobar')
-    group_1 = Person(name='group 1')
-    group_2 = Person(name='group 2')
-    group_3 = Person(name='group 3')
+    group_1 = Group(name='group 1')
+    group_2 = Group(name='group 2')
+    group_3 = Group(name='group 3')
 ```
 
 We can add membership the normal way:
 
 ```python
-    group1.members.sadd(somebody)
+    group_1.members.sadd(somebody)
 ```
 
 And retrieving then this way:
@@ -55,8 +55,7 @@ But say that we want to put a person in many groups at ones, we can do:
     group_3.members.sadd(somebody)
 ```
 
-`limpyd_extensions` provide a way to add/remove relations via the other side of
-the relation:
+`limpyd_extensions` provide a way to add/remove relations via the other side of the relation:
 
 ```python
     somebody.membership.sadd(group2, group3)
@@ -317,7 +316,7 @@ The collection manager used with `ModelWithDynamicFieldMixin` depends on `Extend
 
 ### Dynamic related fields
 
-Dynamic fields also work with related fields, exactly the same way. There is only to additions:
+Dynamic fields also work with related fields, exactly the same way. There is only two additions:
 
 * if you pass a model instance in the `get_for` method, it will be translated to it's pk
 * the first argument of a "related collection" is the dynamic part (can also be an instance)
