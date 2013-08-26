@@ -3,26 +3,27 @@
 
 import codecs
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
-import limpyd
+import limpyd_extensions
 
 long_description = codecs.open('README.md', "r", "utf-8").read()
 
 setup(
     name = "redis-limpyd-extensions",
-    version = limpyd.__version__,
-    author = limpyd.__author__,
-    author_email = limpyd.__contact__,
-    description = limpyd.__doc__,
+    version = limpyd_extensions.__version__,
+    author = limpyd_extensions.__author__,
+    author_email = limpyd_extensions.__contact__,
+    description = limpyd_extensions.__doc__,
     keywords = "redis",
-    url = limpyd.__homepage__,
-    download_url = "https://github.com/twidi/redis-limpyd-extensions/downloads",
-    packages = find_packages(),
+    url = limpyd_extensions.__homepage__,
+    download_url = "https://github.com/twidi/redis-limpyd-extensions/tags",
+    packages = ['limpyd_extensions'],
     include_package_data=True,
-    #license = "MIT",
+    install_requires=["redis-limpyd", ],
     platforms=["any"],
     zip_safe=True,
+    license = "DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE",
 
     long_description = long_description,
 
