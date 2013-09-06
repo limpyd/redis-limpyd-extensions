@@ -12,10 +12,8 @@ Where to find it:
 
 List of available extensions:
 
--  `Add/remove related on both
-   sides <#addremove-related-on-both-sides>`__
-   (#addremove-related-on-both-sides)
--  `Dynamic fields <#dynamic-fields>`__ (#dynamic-fields)
+-  Add/remove related on both sides
+-  Dynamic fields
 
 Add/remove related on both sides
 --------------------------------
@@ -438,5 +436,3 @@ Here is the list of modules and classes provided with the
       -  ``DynamicM2MSetField(DynamicRelatedFieldMixin, M2MSetField)``
       -  ``DynamicM2MListField(DynamicRelatedFieldMixin, M2MListField)``
       -  ``DynamicM2MSortedSetField(DynamicRelatedFieldMixin, M2MSortedSetField)``
-
-
