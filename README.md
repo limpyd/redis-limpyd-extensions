@@ -3,8 +3,11 @@ redis-limpyd-extensions
 
 Some extensions for [redis-limpyd][] ([redis][] orm (sort of) in python)
 
-Github repository: <https://github.com/twidi/redis-limpyd-extensions>
-Pypi package: <https://pypi.python.org/pypi/redis-limpyd-extensions>
+Where to find it:
+
+* Github repository: https://github.com/twidi/redis-limpyd-extensions
+* Pypi package: https://pypi.python.org/pypi/redis-limpyd-extensions
+* Documentation: http://documentup.com/twidi/redis-limpyd-extensions
 
 List of available extensions:
 
