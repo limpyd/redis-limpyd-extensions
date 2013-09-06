@@ -7,7 +7,7 @@ from setuptools import setup
 
 import limpyd_extensions
 
-long_description = codecs.open('README.md', "r", "utf-8").read()
+long_description = codecs.open('README.rst', "r", "utf-8").read()
 
 setup(
     name = "redis-limpyd-extensions",
