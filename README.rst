@@ -1,3 +1,5 @@
+|PyPI Version| |Build Status|
+
 redis-limpyd-extensions
 =======================
 
@@ -7,9 +9,9 @@ Some extensions for
 
 Where to find it:
 
-* Github repository: https://github.com/twidi/redis-limpyd-extensions
-* Pypi package: https://pypi.python.org/pypi/redis-limpyd-extensions
-* Documentation: http://documentup.com/twidi/redis-limpyd-extensions
+-  Github repository: https://github.com/twidi/redis-limpyd-extensions
+-  Pypi package: https://pypi.python.org/pypi/redis-limpyd-extensions
+-  Documentation: http://documentup.com/twidi/redis-limpyd-extensions
 
 List of available extensions:
 
@@ -73,8 +75,8 @@ To use this, simple import the related fields from
 
 .. code:: python
 
-    from limpyd_extensions.related import (FKStringField, FKHashableField,
-                                           M2MSetField, M2MListField,
+    from limpyd_extensions.related import (FKStringField, FKHashableField, 
+                                           M2MSetField, M2MListField, 
                                            M2MSortedSetField)
 
 And use them as usual. (Note that for convenience you can also import
@@ -437,3 +439,8 @@ Here is the list of modules and classes provided with the
       -  ``DynamicM2MSetField(DynamicRelatedFieldMixin, M2MSetField)``
       -  ``DynamicM2MListField(DynamicRelatedFieldMixin, M2MListField)``
       -  ``DynamicM2MSortedSetField(DynamicRelatedFieldMixin, M2MSortedSetField)``
+
+.. |PyPI Version| image:: https://pypip.in/v/redis-limpyd-extensions/badge.png
+   :target: https://pypi.python.org/pypi/redis-limpyd-extensions
+.. |Build Status| image:: https://travis-ci.org/twidi/redis-limpyd-extensions.png?branch=travis
+   :target: https://travis-ci.org/twidi/redis-limpyd-extensions

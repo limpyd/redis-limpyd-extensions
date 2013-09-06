@@ -1,3 +1,7 @@
+[![PyPI Version](https://pypip.in/v/redis-limpyd-extensions/badge.png)](https://pypi.python.org/pypi/redis-limpyd-extensions)
+[![Build Status](https://travis-ci.org/twidi/redis-limpyd-extensions.png?branch=travis)](https://travis-ci.org/twidi/redis-limpyd-extensions)
+
+
 redis-limpyd-extensions
 =======================
 
