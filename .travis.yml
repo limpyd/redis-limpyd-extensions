@@ -9,4 +9,4 @@ services:
 # whitelist
 branches:
   only:
-    - travis
+    - master
