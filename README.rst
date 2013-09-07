@@ -442,5 +442,5 @@ Here is the list of modules and classes provided with the
 
 .. |PyPI Version| image:: https://pypip.in/v/redis-limpyd-extensions/badge.png
    :target: https://pypi.python.org/pypi/redis-limpyd-extensions
-.. |Build Status| image:: https://travis-ci.org/twidi/redis-limpyd-extensions.png?branch=travis
+.. |Build Status| image:: https://travis-ci.org/twidi/redis-limpyd-extensions.png?branch=master
    :target: https://travis-ci.org/twidi/redis-limpyd-extensions
