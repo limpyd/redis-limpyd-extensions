@@ -390,3 +390,7 @@ Here is the list of modules and classes provided with the `limpyd_extensions.dyn
         * `DynamicM2MSetField(DynamicRelatedFieldMixin, M2MSetField)`
         * `DynamicM2MListField(DynamicRelatedFieldMixin, M2MListField)`
         * `DynamicM2MSortedSetField(DynamicRelatedFieldMixin, M2MSortedSetField)` 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/twidi/redis-limpyd-extensions/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
