@@ -3,7 +3,7 @@
 
 import codecs
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 import limpyd_extensions
 
@@ -18,7 +18,7 @@ setup(
     keywords = "redis",
     url = limpyd_extensions.__homepage__,
     download_url = "https://github.com/twidi/redis-limpyd-extensions/tags",
-    packages = ['limpyd_extensions'],
+    packages = find_packages(),
     include_package_data=True,
     install_requires=["redis-limpyd", ],
     platforms=["any"],
