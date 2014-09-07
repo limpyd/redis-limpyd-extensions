@@ -2,10 +2,19 @@
 # -*- coding: utf-8 -*-
 
 import codecs
-
+from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 import limpyd_extensions
+
+
+def get_requirements(source):
+    install_reqs = parse_requirements(source)
+    return set([str(ir.req) for ir in install_reqs])
+
+
+requirements = get_requirements('requirements.txt')
+
 
 long_description = codecs.open('README.rst', "r", "utf-8").read()
 
@@ -18,9 +27,9 @@ setup(
     keywords = "redis",
     url = limpyd_extensions.__homepage__,
     download_url = "https://github.com/twidi/redis-limpyd-extensions/tags",
-    packages = find_packages(),
+    packages = find_packages(exclude=["tests.*", "tests"]),
     include_package_data=True,
-    install_requires=["redis-limpyd", ],
+    install_requires=requirements,
     platforms=["any"],
     zip_safe=True,
     license = "DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE",
@@ -35,6 +44,12 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Programming Language :: Python",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.4",
     ],
 )
-

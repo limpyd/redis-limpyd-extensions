@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+from __future__ import unicode_literals
+from future.builtins import object
 
 from limpyd.contrib.related import re_identifier
 

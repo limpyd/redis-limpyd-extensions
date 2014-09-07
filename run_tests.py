@@ -1,6 +1,12 @@
 #!/usr/bin/env python
+from __future__ import unicode_literals
 
-import unittest
+import sys
+if sys.version_info >= (2, 7):
+    import unittest
+else:
+    import unittest2 as unittest
+
 import argparse
 
 from tests import base, related
