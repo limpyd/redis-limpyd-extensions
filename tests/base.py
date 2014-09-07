@@ -1,5 +1,8 @@
-import unittest
 import sys
+if sys.version_info >= (2, 7):
+    import unittest
+else:
+    import unittest2 as unittest
 
 from limpyd.database import DEFAULT_CONNECTION_SETTINGS
 from limpyd.contrib.database import PipelineDatabase
