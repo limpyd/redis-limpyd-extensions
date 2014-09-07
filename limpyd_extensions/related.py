@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 from __future__ import unicode_literals
+from future.builtins import zip
 
-from itertools import izip
+
 
 from limpyd import model, fields
 # RelatedModel imported to let users import limpyd_extensions.related with
@@ -145,7 +146,7 @@ class RelatedCollectionForSortedSet(_RelatedCollectionWithMethods):
         if 'values_callback' not in kwargs:
             kwargs['values_callback'] = self._to_fields
         pieces = fields.SortedSetField.coerce_zadd_args(*args, **kwargs)
-        for (score, related_field) in izip(*[iter(pieces)] * 2):
+        for (score, related_field) in zip(*[iter(pieces)] * 2):
             related_method = getattr(related_field, 'zadd')
             related_method(score, self.instance._pk, values_callback=None)
 

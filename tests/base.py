@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from future.builtins import object
 
 import sys
 if sys.version_info >= (2, 7):

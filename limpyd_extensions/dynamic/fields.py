@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from __future__ import unicode_literals
+from future.builtins import object
 
 from copy import copy
 import re
