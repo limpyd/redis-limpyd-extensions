@@ -13,6 +13,16 @@ Where to find it:
 * Pypi package: https://pypi.python.org/pypi/redis-limpyd-extensions
 * Documentation: http://documentup.com/twidi/redis-limpyd-extensions
 
+Install:
+
+Python 2.6, 2.7, 3.3 and 3.4 are supported.
+
+```bash
+pip install --process-dependency-links redis-limpyd-extensions
+```
+
+*Note: the `process-dependency-links` is currently required to use a development version of future which correct a bug `redis-limpyd` suffered from.*
+
 List of available extensions:
 
 * Add/remove related on both sides
@@ -237,7 +247,6 @@ is the same as the new:
 [redis-limpyd-extensions]: https://github.com/twidi/redis-limpyd-extensions
 [redis]: http://redis.io
 [redis-limpyd]: https://github.com/yohanboniface/redis-limpyd
-[twidi-limpyd]: https://github.com/twidi/redis-limpyd/tree/develop
 
 
 ## Dynamic fields

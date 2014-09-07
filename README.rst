@@ -13,6 +13,18 @@ Where to find it:
 -  Pypi package: https://pypi.python.org/pypi/redis-limpyd-extensions
 -  Documentation: http://documentup.com/twidi/redis-limpyd-extensions
 
+Install:
+
+Python 2.6, 2.7, 3.3 and 3.4 are supported.
+
+.. code:: bash
+
+    pip install --process-dependency-links redis-limpyd-extensions
+
+*Note: the ``process-dependency-links`` is currently required to use a
+development version of future which correct a bug ``redis-limpyd``
+suffered from.*
+
 List of available extensions:
 
 -  Add/remove related on both sides
@@ -440,7 +452,11 @@ Here is the list of modules and classes provided with the
       -  ``DynamicM2MListField(DynamicRelatedFieldMixin, M2MListField)``
       -  ``DynamicM2MSortedSetField(DynamicRelatedFieldMixin, M2MSortedSetField)``
 
+|Bitdeli Badge|
+
 .. |PyPI Version| image:: https://pypip.in/v/redis-limpyd-extensions/badge.png
    :target: https://pypi.python.org/pypi/redis-limpyd-extensions
 .. |Build Status| image:: https://travis-ci.org/twidi/redis-limpyd-extensions.png?branch=master
    :target: https://travis-ci.org/twidi/redis-limpyd-extensions
+.. |Bitdeli Badge| image:: https://d2weczhvl823v0.cloudfront.net/twidi/redis-limpyd-extensions/trend.png
+   :target: https://bitdeli.com/free
