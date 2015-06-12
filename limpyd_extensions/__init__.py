@@ -1,6 +1,6 @@
 "Some extensions for redis-limpyd, a redis orm (sort of) in python"
 
-VERSION = (0, 1, 1)
+VERSION = (0, 1, 2)
 
 __author__ = 'Stephane "Twidi" Angel'
 __contact__ = "s.angel@twidi.com"
