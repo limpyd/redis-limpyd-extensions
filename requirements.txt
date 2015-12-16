@@ -1,1 +1,1 @@
-redis-limpyd>=0.2.2
+redis-limpyd>=0.2.3
