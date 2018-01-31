@@ -24,7 +24,7 @@ Python versions 2.7, and 3.4 to 3.6 are supported.
 
 Redis-py versions &gt;= 2.9.1, &lt; 2.11 are supported.
 
-Redis-limpyd versions &gt;= 0.2.3 are supported.
+Redis-limpyd versions &gt;= 1.2 are supported.
 
 ```bash
 pip install redis-limpyd-extensions
@@ -342,8 +342,22 @@ MyModel.collection(foo_bar='three')
 MyModel.collection().dynamic_filter('foo', 'bar', 'three')
 ```
 
-Parameters are: the field name, the dynamic part, and the value for the
-filter.
+Parameters are: the field name, the dynamic part, the value for the
+filter and, not show in the previous example, the index suffix to use.
+
+This suffix is default to ''.
+
+But if what you want to do is
+
+```python
+MyModel.collection(foo_bar__eq='three')
+```
+
+You can use `dynamic_filter` this way:
+
+```python
+MyModel.collection().dynamic_filter('foo', 'bar', 'three', 'eq')  # you can use '__eq' too
+```
 
 The collection manager used with `ModelWithDynamicFieldMixin` depends on
 `ExtendedCollectionManager`, so you can chain filters and dynamic

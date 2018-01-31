@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from limpyd.model import RedisModel
 from limpyd import fields as limpyd_fields
 from limpyd.exceptions import ImplementationError
+from limpyd.indexes import TextRangeIndex
 
 from limpyd_extensions.dynamic import fields
 
@@ -175,6 +176,56 @@ class DynamicFieldsTest(LimpydBaseTest):
         # using new dynamic_filter method
         somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool')
         self.assertEqual(set(somebody_cool_movies), attended)
+
+        # and with the 4th parameter, the index suffix
+        somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool', 'eq')
+        self.assertEqual(set(somebody_cool_movies), attended)
+        somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool', '__eq')
+        self.assertEqual(set(somebody_cool_movies), attended)
+
+    def test_dynamic_fields_should_work_with_advanced_index(self):
+        class TestModel(TestRedisModelWithDynamicField):
+            namespace = 'test_dynamic_fields_should_work_with_advanced_index'
+            foo = fields.DynamicStringField(indexable=True, indexes=[TextRangeIndex])
+
+        pk1 = TestModel(foo_aa='fooa', foo_bb='foobb').pk.get()
+        pk2 = TestModel(foo_aa='bara', foo_bb='foobbb', foo_cc='fooc').pk.get()
+
+        self.assertEqual(
+            set(TestModel.collection(foo_aa__gte='foo')),
+            {pk1}
+        )
+        self.assertEqual(
+            set(TestModel.collection().dynamic_filter('foo', 'aa', 'foo', 'gte')),
+            {pk1}
+        )
+
+        self.assertEqual(
+            set(TestModel.collection(foo_cc__startswith='f')),
+            {pk2}
+        )
+        self.assertEqual(
+            set(TestModel.collection().dynamic_filter('foo', 'cc', 'f', '__startswith')),
+            {pk2}
+        )
+
+        self.assertEqual(
+            set(TestModel.collection(foo_bb__lt='z')),
+            {pk1, pk2}
+        )
+        self.assertEqual(
+            set(TestModel.collection().dynamic_filter('foo', 'bb', 'z', 'lt')),
+            {pk1, pk2}
+        )
+
+        self.assertEqual(
+            set(TestModel.collection(foo_dd='fooa')),
+            set()
+        )
+        self.assertEqual(
+            set(TestModel.collection().dynamic_filter('foo', 'dd', 'fooa')),
+            set()
+        )
 
     def test_normal_filters_could_be_filtered_with_dynamic_ones(self):
         somebody_pk = self.somebody.pk.get()
