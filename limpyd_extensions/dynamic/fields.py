@@ -229,6 +229,11 @@ class DynamicFieldMixin(object):
         )
         return self.database.scan_keys(pattern, count)
 
+    def sscan(self, match=None, count=None):
+        return self._inventory.sscan(match, count)
+    scan_versions = sscan
+
+
 
 class DynamicStringField(DynamicFieldMixin, limpyd_fields.StringField):
     pass

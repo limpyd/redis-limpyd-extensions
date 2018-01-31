@@ -328,6 +328,35 @@ Knowing this, you can do operations on these fields:
     print myinstance.foo(othervar).smembers()
     print myotherinstance.foo(somevar).smembers()
 
+To know the existing versions in a dynamic\_field, you can use
+`scan_fields`.
+
+It takes the same argument as the `sscan` command of `SetField` (from
+limpyd), because it is applied on the inventory key where all versions
+are saved.
+
+So if you have some versions:
+
+```python
+myinstance.foo('foo').set('111')
+myinstance.foo('bar').set('222')
+myinstance.foo('baz').set('333')
+```
+
+You can retrieve them all:
+
+```python
+set(myinstance.foo.scan_versions())  # returns {'foo', 'bar', 'baz'}
+```
+
+Or only a part:
+
+```python
+set(myinstance.foo.scan_versions('b*'))  # returns {'bar', 'baz'}
+```
+
+### Filtering
+
 To filter on indexable dynamic fields, there is two ways too:
 
 -   use the classic way, if you now the dynamic part in advance:

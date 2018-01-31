@@ -365,3 +365,20 @@ class DynamicFieldsTest(LimpydBaseTest):
                 'test_dynamic_field_can_scan_all_keys:testmodel:1:foo_bb',
             }
         )
+
+    def test_inventory_could_be_scanned(self):
+        class TestModel(TestRedisModelWithDynamicField):
+            namespace = 'test_inventory_could_be_scanned'
+            foo = fields.DynamicStringField(indexable=True, indexes=[TextRangeIndex])
+
+        obj = TestModel(foo_aa='fooa', foo_bb='foobb')
+
+        self.assertSetEqual(
+            set(obj.foo.sscan()),
+            {'aa', 'bb'}
+        )
+
+        self.assertSetEqual(
+            set(obj.foo.scan_versions('a*')),
+            {'aa'}
+        )
