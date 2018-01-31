@@ -19,7 +19,6 @@ env:
 
 install:
 - "pip install $REDIS"
-- "pip install $LIMPYD"
 - "pip install ."
 
 script: "python run_tests.py"
