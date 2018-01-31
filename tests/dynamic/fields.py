@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from limpyd.model import RedisModel
 from limpyd import fields as limpyd_fields
 from limpyd.exceptions import ImplementationError
+from limpyd.indexes import TextRangeIndex
 
 from limpyd_extensions.dynamic import fields
 
@@ -86,7 +87,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         fight_club_somebody_tags.sadd('fight', 'cool')
 
         retrieved = fight_club_somebody_tags.smembers()
-        attended = set(['fight', 'cool'])
+        attended = {'fight', 'cool'}
 
         self.assertEqual(retrieved, attended)
 
@@ -95,7 +96,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         matrix_somebody_tags.sadd('sf', 'cool')
 
         retrieved = matrix_somebody_tags.smembers()
-        attended = set(['sf', 'cool'])
+        attended = {'sf', 'cool'}
 
         self.assertEqual(retrieved, attended)
 
@@ -106,7 +107,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         fight_club_someoneelse_tags.sadd('ikea', 'revolution')
 
         retrieved = fight_club_someoneelse_tags.smembers()
-        attended = set(['ikea', 'revolution'])
+        attended = {'ikea', 'revolution'}
 
         self.assertEqual(retrieved, attended)
 
@@ -158,7 +159,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         self.fight_club.personal_tags(somebody_pk).sadd('fight', 'cool')
         self.matrix.personal_tags(somebody_pk).sadd('sf', 'cool')
 
-        attended = set(['Fight club', 'Matrix'])
+        attended = {'Fight club', 'Matrix'}
 
         # using real named argument (but not usable if complex one, it's ok here)
         somebody_cool_movies = Movie.collection(personal_tags_Somebody='cool')
@@ -176,6 +177,56 @@ class DynamicFieldsTest(LimpydBaseTest):
         somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool')
         self.assertEqual(set(somebody_cool_movies), attended)
 
+        # and with the 4th parameter, the index suffix
+        somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool', 'eq')
+        self.assertEqual(set(somebody_cool_movies), attended)
+        somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool', '__eq')
+        self.assertEqual(set(somebody_cool_movies), attended)
+
+    def test_dynamic_fields_should_work_with_advanced_index(self):
+        class TestModel(TestRedisModelWithDynamicField):
+            namespace = 'test_dynamic_fields_should_work_with_advanced_index'
+            foo = fields.DynamicStringField(indexable=True, indexes=[TextRangeIndex])
+
+        pk1 = TestModel(foo_aa='fooa', foo_bb='foobb').pk.get()
+        pk2 = TestModel(foo_aa='bara', foo_bb='foobbb', foo_cc='fooc').pk.get()
+
+        self.assertEqual(
+            set(TestModel.collection(foo_aa__gte='foo')),
+            {pk1}
+        )
+        self.assertEqual(
+            set(TestModel.collection().dynamic_filter('foo', 'aa', 'foo', 'gte')),
+            {pk1}
+        )
+
+        self.assertEqual(
+            set(TestModel.collection(foo_cc__startswith='f')),
+            {pk2}
+        )
+        self.assertEqual(
+            set(TestModel.collection().dynamic_filter('foo', 'cc', 'f', '__startswith')),
+            {pk2}
+        )
+
+        self.assertEqual(
+            set(TestModel.collection(foo_bb__lt='z')),
+            {pk1, pk2}
+        )
+        self.assertEqual(
+            set(TestModel.collection().dynamic_filter('foo', 'bb', 'z', 'lt')),
+            {pk1, pk2}
+        )
+
+        self.assertEqual(
+            set(TestModel.collection(foo_dd='fooa')),
+            set()
+        )
+        self.assertEqual(
+            set(TestModel.collection().dynamic_filter('foo', 'dd', 'fooa')),
+            set()
+        )
+
     def test_normal_filters_could_be_filtered_with_dynamic_ones(self):
         somebody_pk = self.somebody.pk.get()
 
@@ -184,7 +235,7 @@ class DynamicFieldsTest(LimpydBaseTest):
 
         personal_cool_drama = Movie.collection(tags='drama') \
                                    .dynamic_filter('personal_tags', somebody_pk, 'cool')
-        attended = set(['Fight club'])
+        attended = {'Fight club'}
         self.assertEqual(set(personal_cool_drama), attended)
 
     def test_dynamic_fields_should_work_for_strings(self):
@@ -193,7 +244,7 @@ class DynamicFieldsTest(LimpydBaseTest):
             test_field = fields.DynamicStringField(indexable=True)
 
         instance = TestModel(test_field_1='foo')
-        self.assertEqual(set(TestModel.collection(test_field_1='foo')), set([instance.pk.get()]))
+        self.assertEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
 
     def test_dynamic_fields_should_work_for_instancehashes(self):
         class TestModel(TestRedisModelWithDynamicField):
@@ -201,7 +252,7 @@ class DynamicFieldsTest(LimpydBaseTest):
             test_field = fields.DynamicInstanceHashField(indexable=True)
 
         instance = TestModel(test_field_1='foo')
-        self.assertEqual(set(TestModel.collection(test_field_1='foo')), set([instance.pk.get()]))
+        self.assertEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
 
         # calling hmget with the defined dynamic field
         self.assertEqual(instance.hmget('test_field_1'), ['foo'])
@@ -225,7 +276,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         instance = TestModel()
         field = instance.get_field('test_field_1')
         field.sadd('foo', 'bar')
-        self.assertEqual(set(TestModel.collection(test_field_1='foo')), set([instance.pk.get()]))
+        self.assertEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
 
     def test_dynamic_fields_should_work_for_lists(self):
         class TestModel(TestRedisModelWithDynamicField):
@@ -235,7 +286,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         instance = TestModel()
         field = instance.get_field('test_field_1')
         field.lpush('foo', 'bar')
-        self.assertEqual(set(TestModel.collection(test_field_1='foo')), set([instance.pk.get()]))
+        self.assertEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
 
     def test_dynamic_fields_should_work_for_sortedsets(self):
         class TestModel(TestRedisModelWithDynamicField):
@@ -245,7 +296,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         instance = TestModel()
         field = instance.get_field('test_field_1')
         field.zadd(foo=1, bar=2)
-        self.assertEqual(set(TestModel.collection(test_field_1='foo')), set([instance.pk.get()]))
+        self.assertEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
 
     def test_dynamic_fields_should_work_for_hashfields(self):
         class TestModel(TestRedisModelWithDynamicField):
@@ -256,8 +307,8 @@ class DynamicFieldsTest(LimpydBaseTest):
         field = instance.get_field('test_field_1')
         field.hmset(**{'foo': 'FOO', 'bar': 'BAR'})
         self.assertEqual(instance.test_field('1').hget('foo'), 'FOO')
-        self.assertEqual(set(TestModel.collection(test_field_1__foo='FOO')), set([instance.pk.get()]))
-        self.assertEqual(set(TestModel.collection().dynamic_filter('test_field__foo', '1', 'FOO')), set([instance.pk.get()]))
+        self.assertEqual(set(TestModel.collection(test_field_1__foo='FOO')), {instance.pk.get()})
+        self.assertEqual(set(TestModel.collection().dynamic_filter('test_field__foo', '1', 'FOO')), {instance.pk.get()})
 
     def test_inventory_should_be_filled_and_cleaned(self):
         somebody_pk = self.somebody.pk.get()
@@ -271,29 +322,63 @@ class DynamicFieldsTest(LimpydBaseTest):
         self.assertEqual(matrix_inventory.smembers(), set())
 
         self.fight_club.personal_tags(somebody_pk).sadd('fight', 'cool')
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk})
         self.assertEqual(matrix_inventory.smembers(), set())
 
         self.fight_club.personal_tags(someone_else_pk).sadd('ikea', 'revolution')
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk, someone_else_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk, someone_else_pk})
         self.assertEqual(matrix_inventory.smembers(), set())
 
         self.matrix.personal_tags(somebody_pk).sadd('sf', 'cool')
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk, someone_else_pk]))
-        self.assertEqual(matrix_inventory.smembers(), set([somebody_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk, someone_else_pk})
+        self.assertEqual(matrix_inventory.smembers(), {somebody_pk})
 
         self.matrix.personal_tags(somebody_pk).delete()
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk, someone_else_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk, someone_else_pk})
         self.assertEqual(matrix_inventory.smembers(), set())
 
         self.fight_club.personal_tags(someone_else_pk).delete()
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk})
         self.assertEqual(matrix_inventory.smembers(), set())
 
         self.fight_club.personal_tags(someone_else_pk).sadd('ikea', 'revolution')
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk, someone_else_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk, someone_else_pk})
         self.assertEqual(matrix_inventory.smembers(), set())
         self.fight_club.personal_tags.delete()
         self.assertEqual(fight_club_inventory.smembers(), set())
         self.assertEqual(matrix_inventory.smembers(), set())
 
+    def test_dynamic_field_can_scan_all_keys(self):
+        class TestModel(TestRedisModelWithDynamicField):
+            namespace = 'test_dynamic_field_can_scan_all_keys'
+            foo = fields.DynamicStringField(indexable=True, indexes=[TextRangeIndex])
+
+        obj = TestModel(foo_aa='fooa', foo_bb='foobb')
+
+        with self.assertRaises(ImplementationError):
+            TestModel.get_field('foo').scan_keys()
+
+        self.assertSetEqual(
+            set(obj.foo.scan_keys()),
+            {
+                'test_dynamic_field_can_scan_all_keys:testmodel:1:foo_aa',
+                'test_dynamic_field_can_scan_all_keys:testmodel:1:foo_bb',
+            }
+        )
+
+    def test_inventory_could_be_scanned(self):
+        class TestModel(TestRedisModelWithDynamicField):
+            namespace = 'test_inventory_could_be_scanned'
+            foo = fields.DynamicStringField(indexable=True, indexes=[TextRangeIndex])
+
+        obj = TestModel(foo_aa='fooa', foo_bb='foobb')
+
+        self.assertSetEqual(
+            set(obj.foo.sscan()),
+            {'aa', 'bb'}
+        )
+
+        self.assertSetEqual(
+            set(obj.foo.scan_versions('a*')),
+            {'aa'}
+        )

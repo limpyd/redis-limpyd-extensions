@@ -4,18 +4,22 @@ redis-limpyd-extensions
 =======================
 
 Some extensions for
-`redis-limpyd <https://github.com/yohanboniface/redis-limpyd>`__
+`redis-limpyd <https://github.com/limpyd/redis-limpyd>`__
 (`redis <http://redis.io>`__ orm (sort of) in python)
 
 Where to find it:
 
--  Github repository: https://github.com/twidi/redis-limpyd-extensions
+-  Github repository: https://github.com/limpyd/redis-limpyd-extensions
 -  Pypi package: https://pypi.python.org/pypi/redis-limpyd-extensions
--  Documentation: http://documentup.com/twidi/redis-limpyd-extensions
+-  Documentation: http://documentup.com/limpyd/redis-limpyd-extensions
 
 Install:
 
-Python 2.6, 2.7, 3.3 and 3.4 are supported.
+Python versions 2.7, and 3.4 to 3.6 are supported (CPython and PyPy).
+
+Redis-py versions >= 2.9.1, < 2.11 are supported.
+
+Redis-limpyd versions >= 1.2 are supported.
 
 .. code:: bash
 
@@ -318,7 +322,7 @@ Note that you can use this shortcut instead of using ``get_for``:
 
 Knowing this, you can do operations on these fields:
 
-::
+.. code:: python
 
     myinstance.foo(somevar).sadd('one', 'two', 'three')
     myinstance.foo(othervar).sadd('four', 'five')
@@ -326,6 +330,35 @@ Knowing this, you can do operations on these fields:
     print myinstance.foo(somevar).smembers()
     print myinstance.foo(othervar).smembers()
     print myotherinstance.foo(somevar).smembers()
+
+
+To know the existing versions in a dynamic_field, you can use ``scan_fields``.
+
+It takes the same argument as the ``sscan`` command of ``SetField`` (from limpyd), because it is applied on the inventory key where all versions are saved.
+
+So if you have some versions:
+
+.. code::python
+
+    myinstance.foo('foo').set('111')
+    myinstance.foo('bar').set('222')
+    myinstance.foo('baz').set('333')
+
+You can retrieve them all:
+
+.. code::python
+
+    set(myinstance.foo.scan_versions())  # returns {'foo', 'bar', 'baz'}
+
+Or only a part:
+
+.. code::python
+
+    set(myinstance.foo.scan_versions('b*'))  # returns {'bar', 'baz'}
+
+
+Filtering
+~~~~~~~~~
 
 To filter on indexable dynamic fields, there is two ways too:
 
@@ -341,8 +374,23 @@ To filter on indexable dynamic fields, there is two ways too:
 
     MyModel.collection().dynamic_filter('foo', 'bar', 'three')
 
-Parameters are: the field name, the dynamic part, and the value for the
-filter.
+Parameters are: the field name, the dynamic part, the value for the
+filter and, not show in the previous example, the index suffix to use.
+
+This suffix is default to ''.
+
+But if what you want to do is
+
+.. code:: python
+
+    MyModel.collection(foo_bar__eq='three')
+
+You can use ``dynamic_filter`` this way:
+
+.. code:: python
+
+    MyModel.collection().dynamic_filter('foo', 'bar', 'three', 'eq')  # you can use '__eq' too
+
 
 The collection manager used with ``ModelWithDynamicFieldMixin`` depends
 on ``ExtendedCollectionManager``, so you can chain filters and dynamic
@@ -448,11 +496,8 @@ Here is the list of modules and classes provided with the
       -  ``DynamicM2MListField(DynamicRelatedFieldMixin, M2MListField)``
       -  ``DynamicM2MSortedSetField(DynamicRelatedFieldMixin, M2MSortedSetField)``
 
-|Bitdeli Badge|
 
-.. |PyPI Version| image:: https://pypip.in/v/redis-limpyd-extensions/badge.png
+.. |PyPI Version| image:: https://img.shields.io/pypi/v/redis-limpyd-extensions.png
    :target: https://pypi.python.org/pypi/redis-limpyd-extensions
-.. |Build Status| image:: https://travis-ci.org/twidi/redis-limpyd-extensions.png?branch=master
-   :target: https://travis-ci.org/twidi/redis-limpyd-extensions
-.. |Bitdeli Badge| image:: https://d2weczhvl823v0.cloudfront.net/twidi/redis-limpyd-extensions/trend.png
-   :target: https://bitdeli.com/free
+.. |Build Status| image:: https://travis-ci.org/limpyd/redis-limpyd-extensions.png?branch=master
+   :target: https://travis-ci.org/limpyd/redis-limpyd-extensions

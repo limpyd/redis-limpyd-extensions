@@ -5,18 +5,22 @@ cache:
     - $HOME/.cache/pip
 
 python:
-  - "2.6"
   - "2.7"
-  - "3.3"
   - "3.4"
+  - "3.5"
+  - "3.6"
+  - "pypy"
+  - "pypy3"
 
 env:
- - REDIS="redis==2.9.1"
- - REDIS="redis==2.10.5"
+  matrix:
+   - REDIS="redis==2.9.1"
+   - REDIS="redis==2.10.6"
 
 install:
-- "pip install ."
 - "pip install $REDIS"
+- "pip install $LIMPYD"
+- "pip install ."
 
 script: "python run_tests.py"
 
