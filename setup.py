@@ -19,7 +19,7 @@ else:
 
 def get_requirements(source):
     install_reqs = parse_requirements(source, **parse_args)
-    return set([str(ir.req) for ir in install_reqs])
+    return list(set([str(ir.req) for ir in install_reqs]))
 
 
 requirements = get_requirements('requirements.txt')
