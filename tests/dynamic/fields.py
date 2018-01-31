@@ -176,6 +176,12 @@ class DynamicFieldsTest(LimpydBaseTest):
         somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool')
         self.assertEqual(set(somebody_cool_movies), attended)
 
+        # and with the 4th parameter, the index suffix
+        somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool', 'eq')
+        self.assertEqual(set(somebody_cool_movies), attended)
+        somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool', '__eq')
+        self.assertEqual(set(somebody_cool_movies), attended)
+
     def test_normal_filters_could_be_filtered_with_dynamic_ones(self):
         somebody_pk = self.somebody.pk.get()
 
