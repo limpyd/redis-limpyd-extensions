@@ -348,3 +348,20 @@ class DynamicFieldsTest(LimpydBaseTest):
         self.assertEqual(fight_club_inventory.smembers(), set())
         self.assertEqual(matrix_inventory.smembers(), set())
 
+    def test_dynamic_field_can_scan_all_keys(self):
+        class TestModel(TestRedisModelWithDynamicField):
+            namespace = 'test_dynamic_field_can_scan_all_keys'
+            foo = fields.DynamicStringField(indexable=True, indexes=[TextRangeIndex])
+
+        obj = TestModel(foo_aa='fooa', foo_bb='foobb')
+
+        with self.assertRaises(ImplementationError):
+            TestModel.get_field('foo').scan_keys()
+
+        self.assertSetEqual(
+            set(obj.foo.scan_keys()),
+            {
+                'test_dynamic_field_can_scan_all_keys:testmodel:1:foo_aa',
+                'test_dynamic_field_can_scan_all_keys:testmodel:1:foo_bb',
+            }
+        )
