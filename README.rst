@@ -15,7 +15,7 @@ Where to find it:
 
 Install:
 
-Python 2.6, 2.7, 3.3 and 3.4 are supported.
+Python 2.7, 3.3 and 3.4 are supported.
 
 .. code:: bash
 
