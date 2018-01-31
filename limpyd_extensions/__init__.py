@@ -1,8 +1,24 @@
-"Some extensions for redis-limpyd, a redis orm (sort of) in python"
+"""Some extensions for redis-limpyd, a redis orm (sort of) in python"""
 
-VERSION = (0, 1, 3)
+import pkg_resources
+from future.builtins import str
+from os import path
+from setuptools.config import read_configuration
 
-__author__ = 'Stephane "Twidi" Angel'
-__contact__ = "s.angel@twidi.com"
-__homepage__ = "https://github.com/twidi/redis-limpyd-extensions"
-__version__ = ".".join(map(str, VERSION))
+
+def _extract_version(package_name):
+    try:
+        # if package is installed
+        version = pkg_resources.get_distribution(package_name).version
+    except pkg_resources.DistributionNotFound:
+        # if not installed, so we must be in source, with ``setup.cfg`` available
+	    _conf = read_configuration(path.join(
+	        path.dirname(__file__), '..', 'setup.cfg')
+	    )
+	    version = _conf['metadata']['version']
+
+    return version
+
+
+EXACT_VERSION = _extract_version('redis_limpyd_extensions')
+VERSION = tuple(int(part) for part in EXACT_VERSION.split('.') if str(part).isnumeric())
