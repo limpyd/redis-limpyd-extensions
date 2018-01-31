@@ -15,7 +15,7 @@ Where to find it:
 
 Install:
 
-Python versions 2.7, and 3.4 to 3.6 are supported.
+Python versions 2.7, and 3.4 to 3.6 are supported (CPython and PyPy).
 
 Redis-py versions >= 2.9.1, < 2.11 are supported.
 
