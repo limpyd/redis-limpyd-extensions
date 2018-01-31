@@ -218,6 +218,22 @@ class DynamicFieldMixin(object):
         return self._instance.get_field(name)
     __call__ = get_for
 
+    def scan_keys(self, match=None, count=None):
+        if not hasattr(self, '_instance'):
+            raise ImplementationError('"scan_keys" can be used only on a bound field')
+        name = self.format % '*'
+        pattern = self.make_key(
+            self._instance._name,
+            self._instance.pk.get(),
+            name,
+        )
+        return self.database.scan_keys(pattern, count)
+
+    def sscan(self, match=None, count=None):
+        return self._inventory.sscan(match, count)
+    scan_versions = sscan
+
+
 
 class DynamicStringField(DynamicFieldMixin, limpyd_fields.StringField):
     pass
