@@ -19,7 +19,7 @@ Python versions 2.7, and 3.4 to 3.6 are supported.
 
 Redis-py versions >= 2.9.1, < 2.11 are supported.
 
-Redis-limpyd versions >= 0.2.3 are supported.
+Redis-limpyd versions >= 1.2 are supported.
 
 .. code:: bash
 

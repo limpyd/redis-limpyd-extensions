@@ -14,10 +14,8 @@ python:
 
 env:
   matrix:
-   - REDIS="redis==2.9.1" LIMPYD="redis-limpyd<1"
-   - REDIS="redis==2.10.6" LIMPYD="redis-limpyd<1"
-   - REDIS="redis==2.9.1" LIMPYD="redis-limpyd>=1"
-   - REDIS="redis==2.10.6" LIMPYD="redis-limpyd>=1"
+   - REDIS="redis==2.9.1"
+   - REDIS="redis==2.10.6"
 
 install:
 - "pip install $REDIS"
