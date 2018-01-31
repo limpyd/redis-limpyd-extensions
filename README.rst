@@ -4,18 +4,22 @@ redis-limpyd-extensions
 =======================
 
 Some extensions for
-`redis-limpyd <https://github.com/yohanboniface/redis-limpyd>`__
+`redis-limpyd <https://github.com/limpyd/redis-limpyd>`__
 (`redis <http://redis.io>`__ orm (sort of) in python)
 
 Where to find it:
 
--  Github repository: https://github.com/twidi/redis-limpyd-extensions
+-  Github repository: https://github.com/limpyd/redis-limpyd-extensions
 -  Pypi package: https://pypi.python.org/pypi/redis-limpyd-extensions
--  Documentation: http://documentup.com/twidi/redis-limpyd-extensions
+-  Documentation: http://documentup.com/limpyd/redis-limpyd-extensions
 
 Install:
 
-Python 2.6, 2.7, 3.3 and 3.4 are supported.
+Python versions 2.7, and 3.4 to 3.6 are supported.
+
+Redis-py versions >= 2.9.1, < 2.11 are supported.
+
+Redis-limpyd versions >= 0.2.3 are supported.
 
 .. code:: bash
 
@@ -448,11 +452,8 @@ Here is the list of modules and classes provided with the
       -  ``DynamicM2MListField(DynamicRelatedFieldMixin, M2MListField)``
       -  ``DynamicM2MSortedSetField(DynamicRelatedFieldMixin, M2MSortedSetField)``
 
-|Bitdeli Badge|
 
-.. |PyPI Version| image:: https://pypip.in/v/redis-limpyd-extensions/badge.png
+.. |PyPI Version| image:: https://img.shields.io/pypi/v/redis-limpyd-extensions.png
    :target: https://pypi.python.org/pypi/redis-limpyd-extensions
-.. |Build Status| image:: https://travis-ci.org/twidi/redis-limpyd-extensions.png?branch=master
-   :target: https://travis-ci.org/twidi/redis-limpyd-extensions
-.. |Bitdeli Badge| image:: https://d2weczhvl823v0.cloudfront.net/twidi/redis-limpyd-extensions/trend.png
-   :target: https://bitdeli.com/free
+.. |Build Status| image:: https://travis-ci.org/limpyd/redis-limpyd-extensions.png?branch=master
+   :target: https://travis-ci.org/limpyd/redis-limpyd-extensions

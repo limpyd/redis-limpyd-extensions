@@ -96,7 +96,7 @@ class TestDynamicRelatedFields(LimpydBaseTest):
         self.fight_club.personal_tags(self.somebody).sadd(self.tags['fight'], self.tags['cool'])
 
         retrieved = self.fight_club.personal_tags(self.somebody).smembers()
-        attended = set([self.tags['fight'].pk.get(), self.tags['cool'].pk.get()])
+        attended = {self.tags['fight'].pk.get(), self.tags['cool'].pk.get()}
 
         self.assertEqual(retrieved, attended)
 
@@ -104,7 +104,7 @@ class TestDynamicRelatedFields(LimpydBaseTest):
         self.matrix.personal_tags(self.somebody).sadd(self.tags['sf'], self.tags['cool'])
 
         retrieved = self.matrix.personal_tags(self.somebody).smembers()
-        attended = set([self.tags['sf'].pk.get(), self.tags['cool'].pk.get()])
+        attended = {self.tags['sf'].pk.get(), self.tags['cool'].pk.get()}
 
         self.assertEqual(retrieved, attended)
 
@@ -112,7 +112,7 @@ class TestDynamicRelatedFields(LimpydBaseTest):
         self.fight_club.personal_tags(self.someone_else).sadd(self.tags['ikea'], self.tags['revolution'])
 
         retrieved = self.fight_club.personal_tags(self.someone_else).smembers()
-        attended = set([self.tags['ikea'].pk.get(), self.tags['revolution'].pk.get()])
+        attended = {self.tags['ikea'].pk.get(), self.tags['revolution'].pk.get()}
 
         self.assertEqual(retrieved, attended)
 
@@ -122,12 +122,12 @@ class TestDynamicRelatedFields(LimpydBaseTest):
 
         # filter only on the dynamic field
         collection = Movie.collection().dynamic_filter('personal_tags', self.somebody, self.tags['cool'])
-        attended = set([self.fight_club.pk.get(), self.matrix.pk.get()])
+        attended = {self.fight_club.pk.get(), self.matrix.pk.get()}
         self.assertEqual(set(collection), attended)
 
         # filter with normal field too
         collection = Movie.collection(tags=self.tags['drama']).dynamic_filter('personal_tags', self.somebody, self.tags['cool'])
-        attended = set([self.fight_club.pk.get(), ])
+        attended = {self.fight_club.pk.get()}
         self.assertEqual(set(collection), attended)
 
     def test_related_collection_should_work_for_each_dynamic_variation(self):
@@ -136,12 +136,12 @@ class TestDynamicRelatedFields(LimpydBaseTest):
 
         # filter only the dynamic field
         collection = self.tags['cool'].movies_for_people(self.somebody)
-        attended = set([self.fight_club.pk.get(), self.matrix.pk.get()])
+        attended = {self.fight_club.pk.get(), self.matrix.pk.get()}
         self.assertEqual(set(collection), attended)
 
         # filter with normal field too
         collection = self.tags['cool'].movies_for_people(self.somebody, tags=self.tags['drama'])
-        attended = set([self.fight_club.pk.get(), ])
+        attended = {self.fight_club.pk.get()}
         self.assertEqual(set(collection), attended)
 
     def test_dynamic_related_field_should_work_with_fkstringfield(self):
@@ -169,10 +169,10 @@ class TestDynamicRelatedFields(LimpydBaseTest):
         self.assertEqual(somebody_it_main_tag, horror.pk.get())
 
         somebody_horror_books = horror.books(self.somebody)
-        self.assertEqual(set(somebody_horror_books), set([it.pk.get(), carry.pk.get()]))
+        self.assertEqual(set(somebody_horror_books), {it.pk.get(), carry.pk.get()})
 
         somebody_fiction_books = fiction.books(self.somebody)
-        self.assertEqual(set(somebody_fiction_books), set([contact.pk.get(), ]))
+        self.assertEqual(set(somebody_fiction_books), {contact.pk.get()})
 
     def test_dynamic_related_field_should_work_with_fkinstancehashfield(self):
         class Tag(TestRedisModel):
@@ -199,10 +199,10 @@ class TestDynamicRelatedFields(LimpydBaseTest):
         self.assertEqual(somebody_it_main_tag, horror.pk.get())
 
         somebody_horror_books = horror.books(self.somebody)
-        self.assertEqual(set(somebody_horror_books), set([it.pk.get(), carry.pk.get()]))
+        self.assertEqual(set(somebody_horror_books), {it.pk.get(), carry.pk.get()})
 
         somebody_fiction_books = fiction.books(self.somebody)
-        self.assertEqual(set(somebody_fiction_books), set([contact.pk.get(), ]))
+        self.assertEqual(set(somebody_fiction_books), {contact.pk.get()})
 
     def test_dynamic_related_field_should_work_with_m2mlistfield(self):
         class Tag(TestRedisModel):
@@ -233,11 +233,11 @@ class TestDynamicRelatedFields(LimpydBaseTest):
         self.assertEqual(somebody_matrix_tags, attended)
 
         somebody_cool_movies = cool.movies_for_people(self.somebody)
-        attended = set([fight_club.pk.get(), matrix.pk.get()])
+        attended = {fight_club.pk.get(), matrix.pk.get()}
         self.assertEqual(set(somebody_cool_movies), attended)
 
         somebody_fight_movies = sf.movies_for_people(self.somebody)
-        attended = set([matrix.pk.get(), ])
+        attended = {matrix.pk.get()}
         self.assertEqual(set(somebody_fight_movies), attended)
 
     def test_dynamic_related_field_should_work_with_m2msortedsetfield(self):
@@ -269,11 +269,11 @@ class TestDynamicRelatedFields(LimpydBaseTest):
         self.assertEqual(somebody_matrix_tags, attended)
 
         somebody_cool_movies = cool.movies_for_people(self.somebody)
-        attended = set([fight_club.pk.get(), matrix.pk.get()])
+        attended = {fight_club.pk.get(), matrix.pk.get()}
         self.assertEqual(set(somebody_cool_movies), attended)
 
         somebody_fight_movies = sf.movies_for_people(self.somebody)
-        attended = set([matrix.pk.get(), ])
+        attended = {matrix.pk.get()}
         self.assertEqual(set(somebody_fight_movies), attended)
 
     def test_inventory_should_be_filled_and_cleaned(self):
@@ -287,27 +287,27 @@ class TestDynamicRelatedFields(LimpydBaseTest):
         self.assertEqual(matrix_inventory.smembers(), set())
 
         self.fight_club.personal_tags(self.somebody).sadd(self.tags['fight'], self.tags['cool'])
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk})
         self.assertEqual(matrix_inventory.smembers(), set())
 
         self.fight_club.personal_tags(self.someone_else).sadd(self.tags['ikea'], self.tags['revolution'])
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk, someone_else_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk, someone_else_pk})
         self.assertEqual(matrix_inventory.smembers(), set())
 
         self.matrix.personal_tags(self.somebody).sadd(self.tags['sf'], self.tags['cool'])
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk, someone_else_pk]))
-        self.assertEqual(matrix_inventory.smembers(), set([somebody_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk, someone_else_pk})
+        self.assertEqual(matrix_inventory.smembers(), {somebody_pk})
 
         self.matrix.personal_tags(self.somebody).delete()
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk, someone_else_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk, someone_else_pk})
         self.assertEqual(matrix_inventory.smembers(), set())
 
         self.fight_club.personal_tags(self.someone_else).delete()
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk})
         self.assertEqual(matrix_inventory.smembers(), set())
 
         self.fight_club.personal_tags(self.someone_else).sadd(self.tags['ikea'], self.tags['revolution'])
-        self.assertEqual(fight_club_inventory.smembers(), set([somebody_pk, someone_else_pk]))
+        self.assertEqual(fight_club_inventory.smembers(), {somebody_pk, someone_else_pk})
         self.assertEqual(matrix_inventory.smembers(), set())
         self.fight_club.personal_tags.delete()
         self.assertEqual(fight_club_inventory.smembers(), set())
