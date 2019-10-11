@@ -24,7 +24,7 @@ Python versions 2.7, and 3.5 to 3.8 are supported (CPython and PyPy).
 
 Redis-py versions &gt;= 2.9.1, &lt; 2.11 are supported.
 
-Redis-limpyd versions &gt;= 1.3 are supported.
+Redis-limpyd versions &gt;= 1.3, &lt; 2 are supported.
 
 ```bash
 pip install redis-limpyd-extensions
