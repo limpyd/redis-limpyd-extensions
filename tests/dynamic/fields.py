@@ -163,7 +163,7 @@ class DynamicFieldsTest(LimpydBaseTest):
 
         # using real named argument (but not usable if complex one, it's ok here)
         somebody_cool_movies = Movie.collection(personal_tags_Somebody='cool')
-        self.assertEqual(set(somebody_cool_movies), attended)
+        self.assertSetEqual(set(somebody_cool_movies), attended)
 
         # using dict as collection arguments
         somebody_personal_tags = Movie.personal_tags.get_name_for(somebody_pk)
@@ -171,17 +171,17 @@ class DynamicFieldsTest(LimpydBaseTest):
             somebody_personal_tags: 'cool',
         }
         somebody_cool_movies = Movie.collection(**arg_dict)
-        self.assertEqual(set(somebody_cool_movies), attended)
+        self.assertSetEqual(set(somebody_cool_movies), attended)
 
         # using new dynamic_filter method
         somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool')
-        self.assertEqual(set(somebody_cool_movies), attended)
+        self.assertSetEqual(set(somebody_cool_movies), attended)
 
         # and with the 4th parameter, the index suffix
         somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool', 'eq')
-        self.assertEqual(set(somebody_cool_movies), attended)
+        self.assertSetEqual(set(somebody_cool_movies), attended)
         somebody_cool_movies = Movie.collection().dynamic_filter('personal_tags', somebody_pk, 'cool', '__eq')
-        self.assertEqual(set(somebody_cool_movies), attended)
+        self.assertSetEqual(set(somebody_cool_movies), attended)
 
     def test_dynamic_fields_should_work_with_advanced_index(self):
         class TestModel(TestRedisModelWithDynamicField):
@@ -236,7 +236,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         personal_cool_drama = Movie.collection(tags='drama') \
                                    .dynamic_filter('personal_tags', somebody_pk, 'cool')
         attended = {'Fight club'}
-        self.assertEqual(set(personal_cool_drama), attended)
+        self.assertSetEqual(set(personal_cool_drama), attended)
 
     def test_dynamic_fields_should_work_for_strings(self):
         class TestModel(TestRedisModelWithDynamicField):
@@ -244,7 +244,7 @@ class DynamicFieldsTest(LimpydBaseTest):
             test_field = fields.DynamicStringField(indexable=True)
 
         instance = TestModel(test_field_1='foo')
-        self.assertEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
+        self.assertSetEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
 
     def test_dynamic_fields_should_work_for_instancehashes(self):
         class TestModel(TestRedisModelWithDynamicField):
@@ -252,7 +252,7 @@ class DynamicFieldsTest(LimpydBaseTest):
             test_field = fields.DynamicInstanceHashField(indexable=True)
 
         instance = TestModel(test_field_1='foo')
-        self.assertEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
+        self.assertSetEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
 
         # calling hmget with the defined dynamic field
         self.assertEqual(instance.hmget('test_field_1'), ['foo'])
@@ -276,7 +276,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         instance = TestModel()
         field = instance.get_field('test_field_1')
         field.sadd('foo', 'bar')
-        self.assertEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
+        self.assertSetEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
 
     def test_dynamic_fields_should_work_for_lists(self):
         class TestModel(TestRedisModelWithDynamicField):
@@ -286,7 +286,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         instance = TestModel()
         field = instance.get_field('test_field_1')
         field.lpush('foo', 'bar')
-        self.assertEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
+        self.assertSetEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
 
     def test_dynamic_fields_should_work_for_sortedsets(self):
         class TestModel(TestRedisModelWithDynamicField):
@@ -296,7 +296,7 @@ class DynamicFieldsTest(LimpydBaseTest):
         instance = TestModel()
         field = instance.get_field('test_field_1')
         field.zadd(foo=1, bar=2)
-        self.assertEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
+        self.assertSetEqual(set(TestModel.collection(test_field_1='foo')), {instance.pk.get()})
 
     def test_dynamic_fields_should_work_for_hashfields(self):
         class TestModel(TestRedisModelWithDynamicField):
@@ -307,8 +307,8 @@ class DynamicFieldsTest(LimpydBaseTest):
         field = instance.get_field('test_field_1')
         field.hmset(**{'foo': 'FOO', 'bar': 'BAR'})
         self.assertEqual(instance.test_field('1').hget('foo'), 'FOO')
-        self.assertEqual(set(TestModel.collection(test_field_1__foo='FOO')), {instance.pk.get()})
-        self.assertEqual(set(TestModel.collection().dynamic_filter('test_field__foo', '1', 'FOO')), {instance.pk.get()})
+        self.assertSetEqual(set(TestModel.collection(test_field_1__foo='FOO')), {instance.pk.get()})
+        self.assertSetEqual(set(TestModel.collection().dynamic_filter('test_field__foo', '1', 'FOO')), {instance.pk.get()})
 
     def test_inventory_should_be_filled_and_cleaned(self):
         somebody_pk = self.somebody.pk.get()
