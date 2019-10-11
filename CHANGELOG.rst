@@ -1,6 +1,10 @@
 Changelog
 =========
 
+Release *v1.1.1* - ``2019-10-11``
+---------------------------------
+* Specify that limpyd 2 is not compatible with version 1.x
+
 Release *v1.1* - ``2019-09-22``
 -------------------------------
 * Official support for Python 3.7 and 3.8
