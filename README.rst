@@ -17,9 +17,13 @@ Install:
 
 Python versions 2.7, and 3.5 to 3.8 are supported (CPython and PyPy).
 
-Redis-py versions >= 2.9.1, < 2.11 are supported.
+Redis-server versions >= 3 are supported.
 
-Redis-limpyd versions >= 1.3, < 2 are supported.
+Redis-py versions >= 3 are supported.
+
+Redis-limpyd versions >= 2 are supported.
+
+You can still use limpyd-extensions versions < 2 if you need something older than the above requirements.
 
 .. code:: bash
 
@@ -87,8 +91,8 @@ To use this, simple import the related fields from
 
 .. code:: python
 
-    from limpyd_extensions.related import (FKStringField, FKHashableField, 
-                                           M2MSetField, M2MListField, 
+    from limpyd_extensions.related import (FKStringField, FKHashableField,
+                                           M2MSetField, M2MListField,
                                            M2MSortedSetField)
 
 And use them as usual. (Note that for convenience you can also import
@@ -231,14 +235,14 @@ The standard:
 
 .. code:: python
 
-        group_2.members.zadd(sometime, somebody)  # sometime, a float, can be a call to time.time()
-        group_3.members.zadd(another_time, somebody)
+        group_2.members.zadd({somebody: sometime})  # sometime, a float, can be a call to time.time()
+        group_3.members.zadd({somebody: another_time})
 
 is the same as the new:
 
 .. code:: python
 
-        somebody.membership.zadd(sometime, group2, another_time, group3)
+        somebody.membership.zadd({group2: sometime, group3: another_time})
 
 -  ``zrem`` works the same way as ``zadd``, without the score, but for
    removing relations:

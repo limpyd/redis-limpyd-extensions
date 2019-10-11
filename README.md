@@ -22,9 +22,13 @@ Install:
 
 Python versions 2.7, and 3.5 to 3.8 are supported (CPython and PyPy).
 
-Redis-py versions &gt;= 2.9.1, &lt; 2.11 are supported.
+Redis-server versions &gt;= 3 are supported.
 
-Redis-limpyd versions &gt;= 1.3, &lt; 2 are supported.
+Redis-py versions &gt;= 3 are supported.
+
+Redis-limpyd versions &gt;= 2 are supported.
+
+You can still use limpyd-extensions versions &lt; 2 if you need something older than the above requirements.
 
 ```bash
 pip install redis-limpyd-extensions
@@ -230,14 +234,14 @@ membership
 The standard:
 
 ```python
-group_2.members.zadd(sometime, somebody)  # sometime, a float, can be a call to time.time()
-group_3.members.zadd(another_time, somebody)
+group_2.members.zadd({somebody: sometime})  # sometime, a float, can be a call to time.time()
+group_3.members.zadd({somebody: another_time})
 ```
 
 is the same as the new:
 
 ```python
-somebody.membership.zadd(sometime, group2, another_time, group3)
+somebody.membership.zadd({group2: sometime, group3: another_time})
 ```
 
 -   `zrem` works the same way as `zadd`, without the score, but for

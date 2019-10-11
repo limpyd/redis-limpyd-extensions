@@ -145,10 +145,11 @@ class RelatedCollectionForSortedSet(_RelatedCollectionWithMethods):
         """
         if 'values_callback' not in kwargs:
             kwargs['values_callback'] = self._to_fields
-        pieces = fields.SortedSetField.coerce_zadd_args(*args, **kwargs)
-        for (score, related_field) in zip(*[iter(pieces)] * 2):
+
+        args, kwargs = fields.SortedSetField.coerce_zadd_args(*args, **kwargs)
+        for related_field, score in kwargs['mapping'].items():
             related_method = getattr(related_field, 'zadd')
-            related_method(score, self.instance._pk, values_callback=None)
+            related_method(**dict(kwargs, values_callback=None, mapping={self.instance._pk: score}))
 
     def zrem(self, *values):
         """
