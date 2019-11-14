@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Unreleased
-----------
+Release *v2.1* - ``2019-11-14``
+-------------------------------
 * Support for limpyd >= 2.1 only
 
 Release *v2.0* - ``2019-10-11``
